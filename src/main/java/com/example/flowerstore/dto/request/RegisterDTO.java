@@ -1,4 +1,4 @@
-package com.example.flowerstore.dto;
+package com.example.flowerstore.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

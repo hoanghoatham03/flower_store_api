@@ -1,28 +1,30 @@
 package com.example.flowerstore.controllers;
 
-import com.example.flowerstore.dto.ApiResponse;
-import com.example.flowerstore.dto.LoginDTO;
-import com.example.flowerstore.dto.RegisterDTO;
+import com.example.flowerstore.dto.request.PaginationDTO;
+import com.example.flowerstore.dto.response.ApiResponse;
+import com.example.flowerstore.dto.request.LoginDTO;
+import com.example.flowerstore.dto.request.RegisterDTO;
+import com.example.flowerstore.dto.response.UserResponse;
 import com.example.flowerstore.exception.InvalidCredentialsException;
 import com.example.flowerstore.security.JwtTokenProvider;
 import com.example.flowerstore.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
@@ -36,12 +38,13 @@ public class UserController {
         this.tokenProvider = tokenProvider;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<RegisterDTO> register(@RequestBody RegisterDTO registerDTO) {
         RegisterDTO user = userService.saveUser(registerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
-    @PostMapping("/login")
+
+    @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -61,4 +64,16 @@ public class UserController {
             throw new InvalidCredentialsException("Invalid username or password");
         }
     }
+
+    @GetMapping("/admin/users")
+    public ResponseEntity<ApiResponse<Object>> getUsers(@ModelAttribute PaginationDTO paginationDTO) {
+        Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
+        List<UserResponse> users = userService.getAllUsers(pageable);
+
+        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Get all users successfully",
+                users);
+
+        return ResponseEntity.ok(response);
+    }
+
 }
