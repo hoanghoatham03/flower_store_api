@@ -38,12 +38,18 @@ public class UserController {
         this.tokenProvider = tokenProvider;
     }
 
+    //register
     @PostMapping("/auth/register")
-    public ResponseEntity<RegisterDTO> register(@RequestBody RegisterDTO registerDTO) {
-        RegisterDTO user = userService.saveUser(registerDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<ApiResponse<Object>> register(@Valid @RequestBody RegisterDTO registerDTO) {
+        UserResponse user = userService.saveUser(registerDTO);
+
+        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.CREATED.value(), "User registered successfully",
+                user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //login
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
@@ -65,6 +71,7 @@ public class UserController {
         }
     }
 
+    //get all users for admin
     @GetMapping("/admin/users")
     public ResponseEntity<ApiResponse<Object>> getUsers(@ModelAttribute PaginationDTO paginationDTO) {
         Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
@@ -72,6 +79,17 @@ public class UserController {
 
         ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Get all users successfully",
                 users);
+
+        return ResponseEntity.ok(response);
+    }
+
+    //get user by userId
+    @GetMapping("/client/user/{userId}")
+    public ResponseEntity<ApiResponse<Object>> getUser(@PathVariable Long userId) {
+        UserResponse user = userService.getUserById(userId);
+
+        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Get user successfully",
+                user);
 
         return ResponseEntity.ok(response);
     }

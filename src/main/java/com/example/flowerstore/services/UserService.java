@@ -35,7 +35,7 @@ public class UserService {
         this.userResponseMapper = userResponseMapper;
     }
 
-    public RegisterDTO saveUser(RegisterDTO registerDTO) {
+    public UserResponse saveUser(RegisterDTO registerDTO) {
         if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
             throw new AlreadyExistsException("User", "email", registerDTO.getEmail());
         }
@@ -43,7 +43,7 @@ public class UserService {
         User user = userMapper.toEntity(registerDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(new Role(2, "USER"));
-        return userMapper.toDTO(userRepository.save(user));
+        return userResponseMapper.toDTO(userRepository.save(user));
     }
 
     public Optional<User> getUserByEmail(String email) {
@@ -56,5 +56,11 @@ public class UserService {
         return users.getContent().stream()
                 .map(userResponseMapper::toDTO)
                 .toList();
+    }
+
+    public UserResponse getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .map(userResponseMapper::toDTO)
+                .orElseThrow();
     }
 }
