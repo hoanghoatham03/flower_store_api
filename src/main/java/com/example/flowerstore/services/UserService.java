@@ -2,6 +2,7 @@ package com.example.flowerstore.services;
 
 import com.example.flowerstore.dto.request.PaginationDTO;
 import com.example.flowerstore.dto.request.RegisterDTO;
+import com.example.flowerstore.dto.request.UserProfileDTO;
 import com.example.flowerstore.dto.response.UserResponse;
 import com.example.flowerstore.entites.Role;
 import com.example.flowerstore.entites.User;
@@ -10,30 +11,26 @@ import com.example.flowerstore.mapper.UserMapper;
 import com.example.flowerstore.mapper.UserResponseMapper;
 import com.example.flowerstore.repositories.RoleRepository;
 import com.example.flowerstore.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
     private final UserResponseMapper userResponseMapper;
+    private final UploadImageFile uploadImageFile;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       UserMapper userMapper, RoleRepository roleRepository, UserResponseMapper userResponseMapper) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
-        this.roleRepository = roleRepository;
-        this.userResponseMapper = userResponseMapper;
-    }
 
     public UserResponse saveUser(RegisterDTO registerDTO) {
         if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
@@ -62,5 +59,46 @@ public class UserService {
         return userRepository.findById(userId)
                 .map(userResponseMapper::toDTO)
                 .orElseThrow();
+    }
+
+    public User getUserProfile(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
+    }
+
+    public User updateUserProfile(Long userId, UserProfileDTO userProfileDTO) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        if (userProfileDTO.getFirstName() != null && !userProfileDTO.getFirstName().isEmpty()) {
+            user.setFirstName(userProfileDTO.getFirstName());
+        }
+
+        if (userProfileDTO.getLastName() != null && !userProfileDTO.getLastName().isEmpty()) {
+            user.setLastName(userProfileDTO.getLastName());
+        }
+
+        if (userProfileDTO.getMobileNumber() != null && !userProfileDTO.getMobileNumber().isEmpty()) {
+            user.setMobileNumber(userProfileDTO.getMobileNumber());
+        }
+
+        if (userProfileDTO.getAvatar() != null && !userProfileDTO.getAvatar().isEmpty()) {
+
+            try {
+                if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
+                    String publicId = user.getAvatar().substring(user.getAvatar().lastIndexOf("/") + 1, user.getAvatar().lastIndexOf("."));
+                    String avatarUrl = uploadImageFile.uploadOverwriteImage(userProfileDTO.getAvatar(), publicId);
+                    user.setAvatar(avatarUrl);
+                } else {
+                    String avatarUrl = uploadImageFile.uploadImage(userProfileDTO.getAvatar());
+                    user.setAvatar(avatarUrl);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return userRepository.save(user);
+
     }
 }
