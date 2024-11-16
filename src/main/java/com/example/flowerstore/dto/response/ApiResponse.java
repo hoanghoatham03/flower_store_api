@@ -1,4 +1,4 @@
-package com.example.flowerstore.dto;
+package com.example.flowerstore.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.example.flowerstore.exception;
 
-import com.example.flowerstore.dto.ApiResponse;
+import com.example.flowerstore.dto.response.ApiResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,7 @@
 package com.example.flowerstore.entites;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -29,6 +30,8 @@ public class User implements UserDetails {
 
     private String mobileNumber;
 
+    private String avatar;
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
@@ -37,6 +40,7 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @JsonIgnore
     private String password;
 
 

@@ -1,4 +1,4 @@
-package com.example.flowerstore.dto;
+package com.example.flowerstore.dto.request;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.example.flowerstore.config;
 
-import com.example.flowerstore.dto.ApiResponse;
+import com.example.flowerstore.dto.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
