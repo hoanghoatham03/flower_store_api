@@ -1,30 +1,33 @@
 package com.example.flowerstore.entites;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "cart_items")
+@Table(name = "comments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItem {
-
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartItemId;
+    private Long commentId;
 
-    @ManyToOne
-    @JoinColumn(name = "cartId")
-    private Cart cart;
+    private String comment;
 
     @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
 
-    private Integer quantity;
-    private Double price;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
+    private LocalDateTime commentDate;
+
+    private Integer rating;
 }
