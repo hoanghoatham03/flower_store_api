@@ -1,6 +1,6 @@
 package com.example.flowerstore.entites;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,5 +21,6 @@ public class ProductImage {
 
     @ManyToOne
     @JoinColumn(name = "productId")
+    @JsonIgnoreProperties("images")
     private Product product;
 }

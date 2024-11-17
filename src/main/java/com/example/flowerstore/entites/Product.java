@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +36,24 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "categoryId")
+    @JsonIgnoreProperties("products")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItem> cartItems;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("product")
     private List<ProductImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    public void addImage(ProductImage image) {
+        if (images == null) {
+            images = new ArrayList<>();
+        }
+        images.add(image);
+        image.setProduct(this);
+    }
 }

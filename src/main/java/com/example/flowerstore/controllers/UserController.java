@@ -84,7 +84,7 @@ public class UserController {
     }
 
     //get user by userId
-    @GetMapping("/client/user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<Object>> getUser(@PathVariable Long userId) {
         UserResponse user = userService.getUserById(userId);
 
@@ -95,7 +95,7 @@ public class UserController {
     }
 
     //get user profile by userId
-    @GetMapping("/client/profile/{userId}")
+    @GetMapping("/profile/{userId}")
     public ResponseEntity<ApiResponse<User>> getUserProfile(@PathVariable Long userId) {
         User user = userService.getUserProfile(userId);
 
@@ -106,7 +106,7 @@ public class UserController {
     }
 
     //update user profile by userId
-    @PutMapping(value = "/client/profile/{userId}", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/profile/{userId}", consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResponse<User>> updateUserProfile(@PathVariable Long userId,
                                                                @ModelAttribute UserProfileDTO userProfileDTO) throws IOException {
         User user = userService.updateUserProfile(userId, userProfileDTO);
@@ -116,7 +116,5 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-
-
 
 }
