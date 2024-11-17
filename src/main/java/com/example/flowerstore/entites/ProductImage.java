@@ -1,20 +1,25 @@
 package com.example.flowerstore.entites;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
-@Table(name = "roles")
+@Table(name = "productImages")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Role {
+@AllArgsConstructor
+public class ProductImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roleId;
-    private String name;
+    private Long imageId;
 
+    private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "productId")
+    private Product product;
 }

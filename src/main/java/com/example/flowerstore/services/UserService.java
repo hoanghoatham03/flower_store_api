@@ -7,6 +7,7 @@ import com.example.flowerstore.dto.response.UserResponse;
 import com.example.flowerstore.entites.Role;
 import com.example.flowerstore.entites.User;
 import com.example.flowerstore.exception.AlreadyExistsException;
+import com.example.flowerstore.exception.NotFoundException;
 import com.example.flowerstore.mapper.UserMapper;
 import com.example.flowerstore.mapper.UserResponseMapper;
 import com.example.flowerstore.repositories.RoleRepository;
@@ -57,16 +58,15 @@ public class UserService {
 
     public UserResponse getUserById(Long userId) {
         return userRepository.findById(userId)
-                .map(userResponseMapper::toDTO)
-                .orElseThrow();
+                .map(userResponseMapper::toDTO).orElseThrow(() -> new NotFoundException("userId = "+ userId));
     }
 
     public User getUserProfile(Long userId) {
-        return userRepository.findById(userId).orElseThrow();
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("userId = "+ userId));
     }
 
     public User updateUserProfile(Long userId, UserProfileDTO userProfileDTO) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("userId = "+ userId));
 
         if (userProfileDTO.getFirstName() != null && !userProfileDTO.getFirstName().isEmpty()) {
             user.setFirstName(userProfileDTO.getFirstName());

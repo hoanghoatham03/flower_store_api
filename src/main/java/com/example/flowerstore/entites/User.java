@@ -32,9 +32,6 @@ public class User implements UserDetails {
 
     private String avatar;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private Role role;
 
     @Email
     @Column(unique = true, nullable = false)
@@ -53,4 +50,14 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
+    @ManyToOne
+    @JoinColumn(name = "roleId")
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
 }
