@@ -3,6 +3,7 @@ package com.example.flowerstore.controllers;
 import com.example.flowerstore.dto.request.PaginationDTO;
 import com.example.flowerstore.dto.request.ProductDTO;
 import com.example.flowerstore.dto.response.ApiResponse;
+import com.example.flowerstore.dto.response.ProductDetailResponse;
 import com.example.flowerstore.dto.response.ProductResponse;
 import com.example.flowerstore.entites.Product;
 import com.example.flowerstore.services.ProductService;
@@ -36,6 +37,26 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // Update product by id for admin
+    @PutMapping("/admin/products/{id}")
+    public ResponseEntity<ApiResponse<Product>> updateProduct(@PathVariable Long id, @ModelAttribute ProductDTO productDTO) {
+        Product product = productService.updateProduct(id, productDTO);
+
+        ApiResponse<Product> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Product updated successfully",
+            product
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    // Delete product by id for admin
+    @DeleteMapping("/admin/products/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "Product deleted successfully", null));
+    }
+
     // Get all products for user
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<Object>> getAllProducts(@ModelAttribute PaginationDTO paginationDTO) {
@@ -49,5 +70,19 @@ public class ProductController {
         );
         return ResponseEntity.ok(response);
     }
+
+    // Get product by id for user
+    @GetMapping("/products/{id}")
+    public ResponseEntity<ApiResponse<ProductDetailResponse>> getProductById(@PathVariable Long id) {
+        ProductDetailResponse productDetailResponse = productService.getProductById(id);
+
+        ApiResponse<ProductDetailResponse> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Get product by id successfully",
+            productDetailResponse
+        );
+        return ResponseEntity.ok(response);
+    }
+
     
 }
