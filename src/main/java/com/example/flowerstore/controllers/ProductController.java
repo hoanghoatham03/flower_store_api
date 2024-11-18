@@ -50,6 +50,13 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    // Delete product by id for admin
+    @DeleteMapping("/admin/products/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "Product deleted successfully", null));
+    }
+
     // Get all products for user
     @GetMapping("/products")
     public ResponseEntity<ApiResponse<Object>> getAllProducts(@ModelAttribute PaginationDTO paginationDTO) {

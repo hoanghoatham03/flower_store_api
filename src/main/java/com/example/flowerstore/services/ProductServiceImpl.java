@@ -34,6 +34,8 @@ public class ProductServiceImpl implements ProductService {
     private final UploadImageFile uploadImageFile;
     private final ProductMapper productMapper;
     private final ProductDetailMapper productDetailMapper;
+
+    // Create product for admin
     @Override
     @Transactional
     public Product createProduct(ProductDTO productDTO) {
@@ -100,6 +102,7 @@ public class ProductServiceImpl implements ProductService {
         return price - (price * discount / 100);
     }
 
+    // Get all products for user
     @Override
     public List<ProductResponse> getAllProducts(Pageable pageable) {
         List<Product> products = productRepository.findAll(pageable).getContent();
@@ -108,6 +111,7 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    // Get product by id for user
     @Override
     public ProductDetailResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
@@ -115,6 +119,7 @@ public class ProductServiceImpl implements ProductService {
         return productDetailMapper.toProductDetailResponse(product);
     }
 
+    // Update product by id for admin
     @Override
     @Transactional
     public Product updateProduct(Long id, ProductDTO productDTO) {
@@ -170,5 +175,11 @@ public class ProductServiceImpl implements ProductService {
             imageUrl.lastIndexOf("/") + 1,
             imageUrl.lastIndexOf(".")
         );
+    }
+
+    // Delete product by id for admin
+    @Override
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 } 

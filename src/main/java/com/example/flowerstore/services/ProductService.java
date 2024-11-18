@@ -14,4 +14,5 @@ public interface ProductService {
     List<ProductResponse> getAllProducts(Pageable pageable);
     ProductDetailResponse getProductById(Long id);
     Product updateProduct(Long id, ProductDTO productDTO);
+    void deleteProduct(Long id);
 } 
