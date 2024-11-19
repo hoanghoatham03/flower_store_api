@@ -39,7 +39,7 @@ public class CategoryController {
     // Create category for admin
     @PostMapping("/admin/categories")
     public ResponseEntity<ApiResponse<Object>> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.CREATED.value(), "Category created successfully", categoryService.createCategory(categoryDTO)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(HttpStatus.CREATED.value(), "Category created successfully", categoryService.createCategory(categoryDTO)));
     }
 
     // Update category for admin
