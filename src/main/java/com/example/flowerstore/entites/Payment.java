@@ -19,7 +19,4 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private AppConstant.PaymentMethod paymentMethod;
 
-    @Enumerated(EnumType.STRING)
-    private AppConstant.PaymentStatus paymentStatus;
-
 }

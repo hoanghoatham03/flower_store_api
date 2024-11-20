@@ -35,6 +35,7 @@ public class Product {
     private Double realPrice;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("product")
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
@@ -43,25 +44,18 @@ public class Product {
     @JsonIgnore
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
-    @JsonIgnore
-    private List<CartItem> cartItems;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("product")
+    @JsonIgnore
     @Builder.Default
-    private List<ProductImage> images = new ArrayList<>();
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public void addImage(ProductImage image) {
-        if (images == null) {
-            images = new ArrayList<>();
-        }
-        images.add(image);
-        image.setProduct(this);
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("product")
+    @Builder.Default
+    private List<ProductImage> images = new ArrayList<>();
 }

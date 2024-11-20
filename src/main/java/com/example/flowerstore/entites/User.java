@@ -2,6 +2,7 @@ package com.example.flowerstore.entites;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -56,8 +57,10 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private List<Address> addresses;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private Cart cart;
 }

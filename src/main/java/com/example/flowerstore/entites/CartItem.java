@@ -1,7 +1,9 @@
 package com.example.flowerstore.entites;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,11 +23,12 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "cartId")
+    @JsonBackReference("cart-items")
     private Cart cart;
 
     @ManyToOne
     @JoinColumn(name = "productId")
-    @JsonIgnore
+    @JsonIgnoreProperties({"cartItems", "orderItems", "comments", "images"})
     private Product product;
 
     private Integer quantity;
