@@ -8,6 +8,7 @@ import com.example.flowerstore.dto.request.RegisterDTO;
 import com.example.flowerstore.dto.response.UserResponse;
 import com.example.flowerstore.entites.User;
 import com.example.flowerstore.exception.InvalidCredentialsException;
+import com.example.flowerstore.exception.InvalidTokenException;
 import com.example.flowerstore.security.JwtTokenProvider;
 import com.example.flowerstore.services.UploadImageFile;
 import com.example.flowerstore.services.UserService;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,8 +26,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,23 +57,67 @@ public class UserController {
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
+            
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(),
-                            loginDTO.getPassword()));
+                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+            );
 
-            String token = tokenProvider.generateToken(authentication);
+            
+            String accessToken = tokenProvider.generateToken(authentication);
+            String refreshToken = tokenProvider.generateRefreshToken(loginDTO.getEmail());
 
-            Map<String, Object> data = Map.of("ACCESS_TOKEN", token);
+            
+            ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)
+                    .secure(true) //only http
+                    .path("/") 
+                    .maxAge(7 * 24 * 60 * 60) 
+                    .build();
 
-            ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Login successful",
-                    data);
+            
+            Map<String, Object> data = Map.of("ACCESS_TOKEN", accessToken);
+            ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Login successful", data);
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                    .body(response);
 
         } catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Invalid username or password");
         }
     }
+
+
+
+    //refresh token
+    @PostMapping("/auth/refresh-token")
+    public ResponseEntity<ApiResponse<Object>> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new InvalidTokenException("Refresh Token is missing");
+        }
+
+        try {
+            
+            if (tokenProvider.validateRefreshToken(refreshToken)) {
+                String email = tokenProvider.extractEmail(refreshToken);
+
+                
+                String newAccessToken = tokenProvider.generateToken(
+                        new UsernamePasswordAuthenticationToken(email, null, new ArrayList<>())
+                );
+
+                Map<String, Object> data = Map.of("ACCESS_TOKEN", newAccessToken);
+                ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Access token refreshed successfully", data);
+                return ResponseEntity.ok(response);
+            } else {
+                throw new InvalidTokenException("Invalid or expired refresh token");
+            }
+        } catch (Exception e) {
+            throw new InvalidTokenException("Error refreshing token");
+        }
+    }
+
+
 
     //get all users for admin
     @GetMapping("/admin/users")
