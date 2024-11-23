@@ -2,10 +2,13 @@ package com.example.flowerstore.controllers;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.flowerstore.dto.request.OrderDTO;
+import com.example.flowerstore.dto.request.PaginationDTO;
 import com.example.flowerstore.entites.Order;
 import com.example.flowerstore.services.OrderService;
 import com.example.flowerstore.dto.response.ApiResponse;
@@ -28,10 +32,11 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
     private final OrderService orderService;
 
-     //get all orders for admin
+     //get all orders for admin with pagination
      @GetMapping("/admin/orders")
-     public ResponseEntity<ApiResponse<List<Order>>> getAllOrdersForAdmin() {
-         List<Order> orders = orderService.getAllOrdersForAdmin();
+     public ResponseEntity<ApiResponse<List<Order>>> getAllOrdersForAdmin(@ModelAttribute PaginationDTO paginationDTO) {
+         Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
+         List<Order> orders = orderService.getAllOrdersForAdmin(pageable);
          return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Orders fetched successfully", orders));
      }
  

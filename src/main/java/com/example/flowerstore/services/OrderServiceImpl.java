@@ -3,6 +3,7 @@ package com.example.flowerstore.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.flowerstore.dto.request.OrderDTO;
@@ -82,8 +83,8 @@ public class OrderServiceImpl implements OrderService {
 
     //get all orders for admin
     @Override
-    public List<Order> getAllOrdersForAdmin() {
-        return orderRepository.findAll();
+    public List<Order> getAllOrdersForAdmin(Pageable pageable) {
+        return orderRepository.findAll(pageable).getContent();
     }
 
     //update order status for admin
