@@ -17,7 +17,9 @@ public class AppConstant {
         "/api/categories/**",
         "/api/products/**",
         "/api/auth/login",
-        "/api/auth/register"
+        "/api/auth/register",
+        "/api/auth/forgot-password",
+        "/api/auth/reset-password"
     };
 
     

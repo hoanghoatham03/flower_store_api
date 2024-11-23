@@ -2,7 +2,9 @@ package com.example.flowerstore.controllers;
 
 import com.example.flowerstore.dto.request.PaginationDTO;
 import com.example.flowerstore.dto.request.UserProfileDTO;
+import com.example.flowerstore.dto.request.VerifyOtpDTO;
 import com.example.flowerstore.dto.response.ApiResponse;
+import com.example.flowerstore.dto.request.ForgotPasswordDTO;
 import com.example.flowerstore.dto.request.LoginDTO;
 import com.example.flowerstore.dto.request.RegisterDTO;
 import com.example.flowerstore.dto.response.UserResponse;
@@ -202,6 +204,33 @@ public class UserController {
         ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK.value(), "Update user profile successfully",
                 user);
 
+        return ResponseEntity.ok(response);
+    }
+
+    //forgot password
+    @PostMapping("/auth/forgot-password")
+    public ResponseEntity<ApiResponse<Object>> forgotPassword(@Valid @RequestBody ForgotPasswordDTO forgotPasswordDTO) {
+        userService.sendPasswordResetOtp(forgotPasswordDTO.getEmail());
+        
+        ApiResponse<Object> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "OTP sent successfully to your email",
+            null
+        );
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/auth/reset-password")
+    public ResponseEntity<ApiResponse<Object>> resetPassword(@Valid @RequestBody VerifyOtpDTO verifyOtpDTO) {
+        userService.verifyOtpAndResetPassword(verifyOtpDTO);
+        
+        ApiResponse<Object> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Password reset successfully",
+            null
+        );
+        
         return ResponseEntity.ok(response);
     }
 
