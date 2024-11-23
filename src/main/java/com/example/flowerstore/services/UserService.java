@@ -40,7 +40,12 @@ public class UserService {
 
         User user = userMapper.toEntity(registerDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(new Role(2, "USER"));
+        
+        // Get the USER role from database
+        Role userRole = roleRepository.findByName("USER")
+            .orElseThrow(() -> new RuntimeException("Error: Role USER is not found."));
+        user.setRole(userRole);
+        
         return userResponseMapper.toDTO(userRepository.save(user));
     }
 

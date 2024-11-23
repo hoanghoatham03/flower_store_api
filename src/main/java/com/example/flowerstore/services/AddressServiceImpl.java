@@ -35,8 +35,8 @@ public class AddressServiceImpl implements AddressService {
 
     // Create address
     @Override
-    public Address createAddress(AddressDTO addressDTO) {
-        User user = userService.getUserProfile(addressDTO.getUserId());
+    public Address createAddress(Long userId, AddressDTO addressDTO) {
+        User user = userService.getUserProfile(userId);
         
         Address address = addressMapper.toEntity(addressDTO);
         address.setUser(user);

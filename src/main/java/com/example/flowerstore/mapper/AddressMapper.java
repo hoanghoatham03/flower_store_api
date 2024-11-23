@@ -8,10 +8,9 @@ import com.example.flowerstore.entites.Address;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
-    @Mapping(target = "userId", source = "user.userId")
     AddressDTO toDTO(Address address);
 
     @Mapping(target = "addressId", ignore = true)
-    @Mapping(target = "user.userId", source = "userId")
+    @Mapping(target = "user.userId", ignore = true)
     Address toEntity(AddressDTO addressDTO);
 }

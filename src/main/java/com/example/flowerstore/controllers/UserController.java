@@ -12,6 +12,7 @@ import com.example.flowerstore.exception.InvalidTokenException;
 import com.example.flowerstore.security.JwtTokenProvider;
 import com.example.flowerstore.services.RefreshTokenService;
 import com.example.flowerstore.services.UserService;
+import com.example.flowerstore.security.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -169,19 +170,20 @@ public class UserController {
     }
 
     //get user by userId
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<ApiResponse<Object>> getUser(@PathVariable Long userId) {
+        SecurityUtils.validateUserAccess(userId);
         UserResponse user = userService.getUserById(userId);
-
-        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Get user successfully",
-                user);
-
+        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), 
+            "Get user successfully",
+            user);
         return ResponseEntity.ok(response);
     }
 
     //get user profile by userId
-    @GetMapping("/profile/{userId}")
+    @GetMapping("/users/{userId}/profile")
     public ResponseEntity<ApiResponse<User>> getUserProfile(@PathVariable Long userId) {
+        SecurityUtils.validateUserAccess(userId);
         User user = userService.getUserProfile(userId);
 
         ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK.value(), "Get user profile successfully",
@@ -191,9 +193,10 @@ public class UserController {
     }
 
     //update user profile by userId
-    @PutMapping(value = "/profile/{userId}", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/users/{userId}/profile", consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResponse<User>> updateUserProfile(@PathVariable Long userId,
-                                                               @ModelAttribute UserProfileDTO userProfileDTO) throws IOException {
+        @ModelAttribute UserProfileDTO userProfileDTO) throws IOException {
+        SecurityUtils.validateUserAccess(userId);
         User user = userService.updateUserProfile(userId, userProfileDTO);
 
         ApiResponse<User> response = new ApiResponse<>(HttpStatus.OK.value(), "Update user profile successfully",

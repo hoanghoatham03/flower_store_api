@@ -18,6 +18,7 @@ import com.example.flowerstore.dto.request.OrderDTO;
 import com.example.flowerstore.entites.Order;
 import com.example.flowerstore.services.OrderService;
 import com.example.flowerstore.dto.response.ApiResponse;
+import com.example.flowerstore.security.SecurityUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,8 +28,29 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
     private final OrderService orderService;
 
+     //get all orders for admin
+     @GetMapping("/admin/orders")
+     public ResponseEntity<ApiResponse<List<Order>>> getAllOrdersForAdmin() {
+         List<Order> orders = orderService.getAllOrdersForAdmin();
+         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Orders fetched successfully", orders));
+     }
+ 
+     //update order status for admin
+     @PutMapping("/admin/users/{userId}/orders/{orderId}/orderStatus")
+     public ResponseEntity<ApiResponse<Order>> updateOrderStatus(@PathVariable Long userId, @PathVariable Long orderId, @RequestParam String orderStatus) {
+         Order order = orderService.updateOrderStatus(userId, orderId, orderStatus);
+         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully", order));
+     }
+ 
+     //update payment status for admin
+     @PutMapping("/admin/users/{userId}/orders/{orderId}/paymentStatus")
+     public ResponseEntity<ApiResponse<Order>> updatePaymentStatus(@PathVariable Long userId, @PathVariable Long orderId, @RequestParam String paymentStatus) {
+         Order order = orderService.updatePaymentStatus(userId, orderId, paymentStatus);
+         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Payment status updated successfully", order));
+     }
+
     //create order from cart
-    @PostMapping("/orders")
+    @PostMapping("users/orders")
     public ResponseEntity<ApiResponse<Order>> createOrder(@RequestBody OrderDTO orderDTO) {
         Order order = orderService.createOrderFromCart(orderDTO);
         return ResponseEntity.ok(new ApiResponse<>(
@@ -39,42 +61,22 @@ public class OrderController {
     }
 
     //get all orders for user
-    @GetMapping("/orders/user/{userId}")
+    @GetMapping("users/{userId}/orders")
     public ResponseEntity<ApiResponse<List<Order>>> getAllOrdersForUser(@PathVariable Long userId) {
+        SecurityUtils.validateUserAccess(userId);
         List<Order> orders = orderService.getAllOrdersForUser(userId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Orders fetched successfully", orders));
     }
 
     //get order by user id and order id
-    @GetMapping("/orders/{orderId}/user/{userId}")
+    @GetMapping("users/{userId}/orders/{orderId}")
     public ResponseEntity<ApiResponse<Order>> getOrderById(@PathVariable Long userId, @PathVariable Long orderId) {
         Order order = orderService.getOrderById(userId, orderId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Order fetched successfully", order));
     }
 
-    //get all orders for admin
-    @GetMapping("/admin/orders")
-    public ResponseEntity<ApiResponse<List<Order>>> getAllOrdersForAdmin() {
-        List<Order> orders = orderService.getAllOrdersForAdmin();
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Orders fetched successfully", orders));
-    }
-
-    //update order status for admin
-    @PutMapping("/admin/orders/{orderId}/user/{userId}/orderStatus")
-    public ResponseEntity<ApiResponse<Order>> updateOrderStatus(@PathVariable Long userId, @PathVariable Long orderId, @RequestParam String orderStatus) {
-        Order order = orderService.updateOrderStatus(userId, orderId, orderStatus);
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully", order));
-    }
-
-    //update payment status for admin
-    @PutMapping("/admin/orders/{orderId}/user/{userId}/paymentStatus")
-    public ResponseEntity<ApiResponse<Order>> updatePaymentStatus(@PathVariable Long userId, @PathVariable Long orderId, @RequestParam String paymentStatus) {
-        Order order = orderService.updatePaymentStatus(userId, orderId, paymentStatus);
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Payment status updated successfully", order));
-    }
-
     //delete order for user
-    @DeleteMapping("/orders/{orderId}/user/{userId}")
+    @DeleteMapping("/orders/{orderId}/users/{userId}")
     public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long userId, @PathVariable Long orderId) {
         orderService.deleteOrder(userId, orderId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Order deleted successfully", null));

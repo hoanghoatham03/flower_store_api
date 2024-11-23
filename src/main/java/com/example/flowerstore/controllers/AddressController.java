@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.flowerstore.dto.request.AddressDTO;
 import com.example.flowerstore.dto.response.ApiResponse;
 import com.example.flowerstore.services.AddressService;
+import com.example.flowerstore.security.SecurityUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,32 +32,37 @@ public class AddressController {
     }
 
     // Get address by id for user
-    @GetMapping("/addresses/{id}")
-    public ResponseEntity<ApiResponse<Object>> getAddressById(@PathVariable Long id) {
+    @GetMapping("/users/{userId}/addresses/{id}")
+    public ResponseEntity<ApiResponse<Object>> getAddressById(@PathVariable Long userId, @PathVariable Long id) {
+        SecurityUtils.validateUserAccess(userId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Address fetched successfully", addressService.getAddressById(id)));
     }
 
-    // Get address by user id
-    @GetMapping("/addresses/user/{userId}")
+    // Get all address by user id
+    @GetMapping("/users/{userId}/addresses")
     public ResponseEntity<ApiResponse<Object>> getAddressByUserId(@PathVariable Long userId) {
+        SecurityUtils.validateUserAccess(userId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Address fetched successfully", addressService.getAddressByUserId(userId)));
     }
 
     // Create address for user
-    @PostMapping("/addresses")
-    public ResponseEntity<ApiResponse<Object>> createAddress(@RequestBody AddressDTO addressDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(HttpStatus.CREATED.value(), "Address created successfully", addressService.createAddress(addressDTO)));
+    @PostMapping("/users/{userId}/addresses")
+    public ResponseEntity<ApiResponse<Object>> createAddress(@PathVariable Long userId, @RequestBody AddressDTO addressDTO) {
+        SecurityUtils.validateUserAccess(userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(HttpStatus.CREATED.value(), "Address created successfully", addressService.createAddress(userId, addressDTO)));
     }
 
     // Update address for user
-    @PutMapping("/addresses/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateAddress(@PathVariable Long id, @RequestBody AddressDTO addressDTO) {
+    @PutMapping("/users/{userId}/addresses/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateAddress(@PathVariable Long userId, @PathVariable Long id, @RequestBody AddressDTO addressDTO) {
+        SecurityUtils.validateUserAccess(userId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Address updated successfully", addressService.updateAddress(id, addressDTO)));
     }
 
     // Delete address for user
-    @DeleteMapping("/addresses/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteAddress(@PathVariable Long id) {
+    @DeleteMapping("/users/{userId}/addresses/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteAddress(@PathVariable Long userId, @PathVariable Long id) {
+        SecurityUtils.validateUserAccess(userId);
         addressService.deleteAddress(id);
         return ResponseEntity.ok(new ApiResponse<Void>(HttpStatus.OK.value(), "Address deleted successfully", null));
     }

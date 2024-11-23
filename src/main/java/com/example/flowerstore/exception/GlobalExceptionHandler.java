@@ -93,4 +93,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("details", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", HttpStatus.FORBIDDEN.value());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
 }
