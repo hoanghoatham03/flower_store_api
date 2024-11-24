@@ -11,19 +11,26 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-
 @ControllerAdvice
 public class ConfigResponse implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class converterType) {
-        return true;
+        String requestUri = methodParameter.getContainingClass().getName();
+        return !requestUri.contains("springdoc") && 
+               !requestUri.contains("swagger") && 
+               !requestUri.contains("openapi");
     }
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-                                  Class selectedConverterType, ServerHttpRequest request,
-                                  ServerHttpResponse response) {
+                                Class selectedConverterType, ServerHttpRequest request,
+                                ServerHttpResponse response) {
+        if (body instanceof ApiResponse || 
+            request.getURI().getPath().contains("api-docs") || 
+            request.getURI().getPath().contains("swagger-ui")) {
+            return body;
+        }
 
         int status = HttpStatus.OK.value();
         if (response instanceof ServletServerHttpResponse) {
@@ -31,21 +38,14 @@ public class ConfigResponse implements ResponseBodyAdvice<Object> {
             status = servletResponse.getStatus();
         }
 
-        if (body instanceof ApiResponse) {
-            return body;
-        }
-
         if (status >= 400) {
             return body;
         }
 
-        ApiResponse<Object> apiResponse = new ApiResponse<>(
+        return new ApiResponse<>(
                 status,
                 "Call API successfully",
                 body
         );
-
-        return apiResponse;
     }
-
 }

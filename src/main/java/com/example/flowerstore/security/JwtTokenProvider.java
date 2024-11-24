@@ -27,6 +27,8 @@ public class JwtTokenProvider {
     private String jwtSecret;
     @Value("${jwt.expiration}")
     private int jwtExpirationInMs;
+    @Value("${jwt.refresh.expiration}")
+    private int jwtRefreshExpirationInMs;
 
 
     public String generateToken(Authentication authentication) {
@@ -42,6 +44,7 @@ public class JwtTokenProvider {
                 .setExpiration(expirationThirtyMinutes)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
+
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -53,10 +56,12 @@ public class JwtTokenProvider {
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
         try {
             return Jwts
@@ -71,11 +76,41 @@ public class JwtTokenProvider {
             throw new InvalidTokenException("Invalid JWT token");
         }
     }
+
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
+
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String email = extractEmail(token);
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    public String generateRefreshToken(String email) {
+        var expirationSevenDays = new Date(System.currentTimeMillis() + jwtRefreshExpirationInMs * 1000L);
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expirationSevenDays)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+    
+
+    public Boolean validateRefreshToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSignKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException("Refresh token is expired");
+        } catch (Exception e) {
+            throw new InvalidTokenException("Invalid refresh token");
+        }
+    }
+    
+    
+    
 }

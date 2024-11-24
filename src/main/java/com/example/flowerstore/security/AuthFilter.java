@@ -40,12 +40,15 @@ public class AuthFilter extends OncePerRequestFilter {
             email = tokenProvider.extractEmail(token);
         }
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             User principal = userService.getUserByEmail(email)
                     .orElseThrow(() -> new BadCredentialsException("Email not found"));
-            if (tokenProvider.validateToken(token, (UserDetails) principal)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(principal, null, ((UserDetails) principal).getAuthorities());
+                
+            if (tokenProvider.validateToken(token, principal)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    principal,
+                    null,
+                    principal.getAuthorities()
+                );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
