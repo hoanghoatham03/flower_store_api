@@ -16,7 +16,7 @@ import java.util.List;
 @Configuration
 public class OpenAPIConfig {
 
-    @Value("${flowerstore.openapi.dev-url:http://localhost:8080}")
+    @Value("${flowerstore.openapi.dev-url}")
     private String devUrl;
 
     private SecurityScheme createAPIKeyScheme() {
@@ -35,7 +35,7 @@ public class OpenAPIConfig {
         Contact contact = new Contact();
         contact.setEmail("boyssloveexx@gmail.com");
         contact.setName("API Support");
-        contact.setUrl("https://www.example.com");
+        contact.setUrl(devUrl);
 
         License mitLicense = new License()
                 .name("MIT License")
