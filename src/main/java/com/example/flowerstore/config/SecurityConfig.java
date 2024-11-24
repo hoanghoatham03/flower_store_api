@@ -46,8 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(AppConstant.ADMIN_LIST).hasRole("ADMIN")
                         .requestMatchers(AppConstant.USER_LIST).hasRole("USER")
                         .requestMatchers(AppConstant.PUBLIC_LIST).permitAll()
-                        .anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults());
+                        .anyRequest().authenticated());
         return http.build();
     }
     @Bean
