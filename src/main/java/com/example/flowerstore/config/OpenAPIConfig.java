@@ -16,7 +16,7 @@ import java.util.List;
 @Configuration
 public class OpenAPIConfig {
 
-    @Value("${flowerstore.openapi.dev-url}")
+    @Value("${flowerstore.openapi.dev-url:http://localhost:8080}")
     private String devUrl;
 
     private SecurityScheme createAPIKeyScheme() {

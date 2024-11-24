@@ -33,3 +33,6 @@ build/
 .vscode/
 
 .env
+
+mysql_data/
+redis_data/
