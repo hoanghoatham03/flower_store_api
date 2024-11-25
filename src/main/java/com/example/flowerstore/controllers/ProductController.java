@@ -38,7 +38,7 @@ public class ProductController {
     }
 
     // Update product by id for admin
-    @PutMapping("/admin/products/{id}")
+    @PutMapping(value = "/admin/products/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResponse<Product>> updateProduct(@PathVariable Long id, @ModelAttribute ProductDTO productDTO) {
         Product product = productService.updateProduct(id, productDTO);
 
