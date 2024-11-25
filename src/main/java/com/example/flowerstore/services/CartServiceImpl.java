@@ -11,10 +11,12 @@ import com.example.flowerstore.entites.CartItem;
 import com.example.flowerstore.entites.Product;
 import com.example.flowerstore.mapper.ProductDetailResponseMapper;
 import com.example.flowerstore.repositories.CartRepository;
+import com.example.flowerstore.util.AppConstant;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class CartServiceImpl implements CartService {
     private final UserService userService;
     @Autowired
     private ProductDetailResponseMapper productMapper;
+    private final int MAX_QUANTITY_PER_ITEM = AppConstant.MAX_QUANTITY_PER_ITEM;
 
     private Cart getOrCreateCart(Long userId) {
         Cart cart = cartRepository.findByUser_UserId(userId);
@@ -36,7 +39,23 @@ public class CartServiceImpl implements CartService {
         return cart;
     }
 
+    private void validateCartItem(CartItem item) {
+        if (item.getQuantity() <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+        if (item.getQuantity() > MAX_QUANTITY_PER_ITEM) {
+            throw new IllegalArgumentException("Quantity exceeds maximum allowed");
+        }
+    }
+
+    private void validateCartItems(List<CartItem> items) {
+        for (CartItem item : items) {
+            validateCartItem(item);
+        }
+    }
+
     private void recalculateCartTotal(Cart cart) {
+        validateCartItems(cart.getCartItems());
         double totalPrice = cart.getCartItems().stream()
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();

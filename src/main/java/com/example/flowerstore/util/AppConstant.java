@@ -22,7 +22,10 @@ public class AppConstant {
         "/api/auth/reset-password",
         "/api-docs/**",
         "/swagger-ui/**",
-        "/v3/api-docs/**"
+        "/swagger-ui.html",
+        "/v3/api-docs/**",
+        "/swagger-resources/**",
+        "/webjars/**"
     };
 
     
@@ -43,6 +46,7 @@ public class AppConstant {
         CANCELLED
     }
 
+    public static final int MAX_QUANTITY_PER_ITEM = 10;
 
 }
 
