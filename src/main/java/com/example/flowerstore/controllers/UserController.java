@@ -88,8 +88,8 @@ public class UserController {
                     .maxAge(refreshTokenExpirationMs / 1000)
                     .build();
     
-            // send access token to body
-            Map<String, Object> data = Map.of("ACCESS_TOKEN", accessToken);
+            // send access token and user to body
+            Map<String, Object> data = Map.of("ACCESS_TOKEN", accessToken, "user", user);
             ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Login successful", data);
     
             return ResponseEntity.ok()
