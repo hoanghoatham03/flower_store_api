@@ -84,5 +84,21 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    // Get products by category id for user
+    @GetMapping("/products/categories/{categoryId}")
+    public ResponseEntity<ApiResponse<Object>> getProductsByCategoryId(
+            @PathVariable Long categoryId,
+            @ModelAttribute PaginationDTO paginationDTO) {
+        Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
+        List<ProductResponse> products = productService.getProductsByCategoryId(categoryId, pageable);
+
+        ApiResponse<Object> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Get products by category successfully",
+            products
+        );
+        return ResponseEntity.ok(response);
+    }
+
     
 }
