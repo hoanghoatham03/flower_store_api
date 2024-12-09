@@ -62,6 +62,6 @@ public class User implements UserDetails {
     private List<Address> addresses;
 
     @OneToOne(mappedBy = "user")
-    @JsonIgnoreProperties("user")
+    @JsonIgnore
     private Cart cart;
 }
