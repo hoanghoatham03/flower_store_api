@@ -51,12 +51,13 @@ public class UploadImageFileImpl implements UploadImageFile {
 
         String extension = getFileExtension(file.getOriginalFilename());
         log.info("File extension: {}", extension);
-
+        //delete old image and upload new image
+        deleteImage(publicId);
+        String newPublicId = generatePublicValue(file.getOriginalFilename());
         try {
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("public_id", publicId,
-                    "overwrite", true, "invalidate", true));
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("public_id", newPublicId));
             log.info("Upload result: {}", uploadResult);
-            return generateFileUrl(publicId, extension);
+            return generateFileUrl(newPublicId, extension);
         } catch (Exception e) {
             log.error("Error uploading file: {}", e.getMessage(), e);
             throw e;
