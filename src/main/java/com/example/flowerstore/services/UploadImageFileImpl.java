@@ -54,7 +54,7 @@ public class UploadImageFileImpl implements UploadImageFile {
 
         try {
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("public_id", publicId,
-                    "overwrite", true));
+                    "overwrite", true, "invalidate", true));
             log.info("Upload result: {}", uploadResult);
             return generateFileUrl(publicId, extension);
         } catch (Exception e) {
