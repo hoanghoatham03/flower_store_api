@@ -28,7 +28,7 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "productId")
-    @JsonIgnoreProperties({"cartItems", "orderItems", "comments", "images"})
+    @JsonIgnoreProperties({"cartItems", "orderItems", "comments"})
     private Product product;
 
     private Integer quantity;
