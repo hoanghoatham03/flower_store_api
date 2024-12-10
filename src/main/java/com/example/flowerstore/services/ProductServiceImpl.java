@@ -191,4 +191,12 @@ public class ProductServiceImpl implements ProductService {
                 .map(productMapper::toProductResponse)
                 .toList();
     }
+
+    @Override
+    public List<ProductResponse> getProductsByName(String name, Pageable pageable) {
+        Page<Product> products = productRepository.findByProductNameContaining(name, pageable);
+        return products.getContent().stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
 } 
