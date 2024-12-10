@@ -35,7 +35,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "userId")
-    @JsonIgnore
+    @JsonIgnoreProperties({"cartItems", "orderItems", "comments", "addresses"})
     private User user;
 
     @ManyToOne
