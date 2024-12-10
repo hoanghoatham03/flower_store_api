@@ -100,5 +100,20 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    // Get products by name for user
+    @GetMapping("/products/search")
+    public ResponseEntity<ApiResponse<Object>> getProductsByName(@RequestParam String name, @ModelAttribute PaginationDTO paginationDTO) {
+        Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
+        List<ProductResponse> products = productService.getProductsByName(name, pageable);
+
+        ApiResponse<Object> response = new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Get products by name successfully",
+            products
+        );
+        return ResponseEntity.ok(response);
+    }
+
     
 }
+
