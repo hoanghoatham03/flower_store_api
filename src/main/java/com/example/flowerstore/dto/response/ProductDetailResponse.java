@@ -17,6 +17,7 @@ public class ProductDetailResponse {
     private Double price;
     private Double discount;
     private Double realPrice;
+    private Long categoryId;
     private String categoryName;
     private List<Comment> comments;
 

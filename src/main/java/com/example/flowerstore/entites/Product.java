@@ -41,7 +41,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "categoryId")
-    @JsonIgnore
+    @JsonIgnoreProperties("product")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

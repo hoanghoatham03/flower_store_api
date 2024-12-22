@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ProductDetailMapper {
-    
+    @Mapping(target = "categoryId", source = "category.categoryId")
     @Mapping(target = "categoryName", source = "category.categoryName")
     ProductDetailResponse toProductDetailResponse(Product product);
 }

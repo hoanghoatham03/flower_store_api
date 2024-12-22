@@ -8,6 +8,7 @@ import com.example.flowerstore.entites.Product;
 
 @Mapper(componentModel = "spring")
 public interface ProductDetailResponseMapper {
+    @Mapping(target = "categoryId", source = "category.categoryId")
     @Mapping(target = "categoryName", source = "category.categoryName")
     ProductDetailResponse toProductDetailResponse(Product product);
 
