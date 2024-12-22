@@ -53,6 +53,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private AppConstant.PaymentStatus paymentStatus;
 
+    private String qrCode;
+
     @PrePersist
     public void prePersist() {
         this.orderDate = LocalDateTime.now();

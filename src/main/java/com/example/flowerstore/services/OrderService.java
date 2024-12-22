@@ -13,4 +13,6 @@ public interface OrderService {
     Order updateOrderStatus(Long userId, Long orderId, String orderStatus);
     Order updatePaymentStatus(Long userId, Long orderId, String paymentStatus);
     void deleteOrder(Long userId, Long orderId);
+    String getQrCode(Double amount, String transactionContent);
+    Boolean checkPaymentStatus(Long orderId, Double amount, String transactionContent);
 }

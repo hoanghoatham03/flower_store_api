@@ -23,6 +23,7 @@ import com.example.flowerstore.entites.Order;
 import com.example.flowerstore.services.OrderService;
 import com.example.flowerstore.dto.response.ApiResponse;
 import com.example.flowerstore.security.SecurityUtils;
+import com.example.flowerstore.util.AppConstant;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,7 +55,7 @@ public class OrderController {
          return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Payment status updated successfully", order));
      }
 
-    //create order from cart
+    //create order from cart with payment method is cash
     @PostMapping("users/orders")
     public ResponseEntity<ApiResponse<Order>> createOrder(@RequestBody OrderDTO orderDTO) {
         Order order = orderService.createOrderFromCart(orderDTO);
@@ -64,6 +65,39 @@ public class OrderController {
             order
         ));
     }
+
+    //create order from cart with payment method is bank
+    @PostMapping("users/orders/bank")
+    public ResponseEntity<ApiResponse<Order>> createOrderBank(@RequestBody OrderDTO orderDTO) {
+        try {
+            Order order = orderService.createOrderFromCart(orderDTO);
+            
+            if (order.getPaymentStatus() == AppConstant.PaymentStatus.FAILED) {
+                return ResponseEntity.badRequest()
+                    .body(new ApiResponse<>(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Payment failed or timed out",
+                        null
+                    ));
+            }
+            
+            return ResponseEntity.ok(new ApiResponse<>(
+                HttpStatus.CREATED.value(),
+                "Order created successfully",
+                order
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(new ApiResponse<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage(),
+                    null
+                ));
+        }
+    }
+
+
+
 
     //get all orders for user
     @GetMapping("users/{userId}/orders")
