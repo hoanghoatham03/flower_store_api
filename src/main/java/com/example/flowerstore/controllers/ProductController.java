@@ -4,7 +4,7 @@ import com.example.flowerstore.dto.request.PaginationDTO;
 import com.example.flowerstore.dto.request.ProductDTO;
 import com.example.flowerstore.dto.response.ApiResponse;
 import com.example.flowerstore.dto.response.ProductDetailResponse;
-import com.example.flowerstore.dto.response.ProductResponse;
+import com.example.flowerstore.dto.response.ProductPageResponse;
 import com.example.flowerstore.entites.Product;
 import com.example.flowerstore.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -59,14 +59,14 @@ public class ProductController {
 
     // Get all products for user
     @GetMapping("/products")
-    public ResponseEntity<ApiResponse<Object>> getAllProducts(@ModelAttribute PaginationDTO paginationDTO) {
+    public ResponseEntity<ApiResponse<ProductPageResponse>> getAllProducts(@ModelAttribute PaginationDTO paginationDTO) {
         Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
-        List<ProductResponse> products = productService.getAllProducts(pageable);
+        ProductPageResponse productPageResponse = productService.getAllProducts(pageable);
 
-        ApiResponse<Object> response = new ApiResponse<>(
+        ApiResponse<ProductPageResponse> response = new ApiResponse<>(
             HttpStatus.OK.value(),
             "Get all products successfully",
-            products
+            productPageResponse
         );
         return ResponseEntity.ok(response);
     }
@@ -86,30 +86,30 @@ public class ProductController {
 
     // Get products by category id for user
     @GetMapping("/products/categories/{categoryId}")
-    public ResponseEntity<ApiResponse<Object>> getProductsByCategoryId(
+    public ResponseEntity<ApiResponse<ProductPageResponse>> getProductsByCategoryId(
             @PathVariable Long categoryId,
             @ModelAttribute PaginationDTO paginationDTO) {
         Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
-        List<ProductResponse> products = productService.getProductsByCategoryId(categoryId, pageable);
+        ProductPageResponse productPageResponse = productService.getProductsByCategoryId(categoryId, pageable);
 
-        ApiResponse<Object> response = new ApiResponse<>(
+        ApiResponse<ProductPageResponse> response = new ApiResponse<>(
             HttpStatus.OK.value(),
             "Get products by category successfully",
-            products
+            productPageResponse
         );
         return ResponseEntity.ok(response);
     }
 
     // Get products by name for user
     @GetMapping("/products/search")
-    public ResponseEntity<ApiResponse<Object>> getProductsByName(@RequestParam String name, @ModelAttribute PaginationDTO paginationDTO) {
+    public ResponseEntity<ApiResponse<ProductPageResponse>> getProductsByName(@RequestParam String name, @ModelAttribute PaginationDTO paginationDTO) {
         Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
-        List<ProductResponse> products = productService.getProductsByName(name, pageable);
+        ProductPageResponse productPageResponse = productService.getProductsByName(name, pageable);
 
-        ApiResponse<Object> response = new ApiResponse<>(
+        ApiResponse<ProductPageResponse> response = new ApiResponse<>(
             HttpStatus.OK.value(),
             "Get products by name successfully",
-            products
+            productPageResponse
         );
         return ResponseEntity.ok(response);
     }

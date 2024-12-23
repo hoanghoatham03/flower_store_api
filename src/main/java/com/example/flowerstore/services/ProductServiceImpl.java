@@ -3,6 +3,7 @@ package com.example.flowerstore.services;
 import com.example.flowerstore.dto.request.ProductDTO;
 import com.example.flowerstore.dto.response.ProductDetailResponse;
 import com.example.flowerstore.dto.response.ProductResponse;
+import com.example.flowerstore.dto.response.ProductPageResponse;
 import com.example.flowerstore.entites.Category;
 import com.example.flowerstore.entites.Product;
 import com.example.flowerstore.entites.ProductImage;
@@ -105,11 +106,17 @@ public class ProductServiceImpl implements ProductService {
 
     // Get all products for user
     @Override
-    public List<ProductResponse> getAllProducts(Pageable pageable) {
-        List<Product> products = productRepository.findAll(pageable).getContent();
-        return products.stream()
+    public ProductPageResponse getAllProducts(Pageable pageable) {
+        Page<Product> productPage = productRepository.findAll(pageable);
+        List<ProductResponse> products = productPage.getContent().stream()
                 .map(productMapper::toProductResponse)
                 .toList();
+            
+        return new ProductPageResponse(
+            products,
+            productPage.getTotalPages(),
+            productPage.getTotalElements()
+        );
     }
 
     // Get product by id for user
@@ -185,18 +192,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getProductsByCategoryId(Long categoryId, Pageable pageable) {
+    public ProductPageResponse getProductsByCategoryId(Long categoryId, Pageable pageable) {
         Page<Product> products = productRepository.findByCategoryCategoryId(categoryId, pageable);
-        return products.getContent().stream()
+        List<ProductResponse> productResponses = products.getContent().stream()
                 .map(productMapper::toProductResponse)
                 .toList();
+        return new ProductPageResponse(
+            productResponses,
+            products.getTotalPages(),
+            products.getTotalElements()
+        );
     }
 
     @Override
-    public List<ProductResponse> getProductsByName(String name, Pageable pageable) {
+    public ProductPageResponse getProductsByName(String name, Pageable pageable) {
         Page<Product> products = productRepository.findByProductNameContaining(name, pageable);
-        return products.getContent().stream()
+        List<ProductResponse> productResponses = products.getContent().stream()
                 .map(productMapper::toProductResponse)
                 .toList();
+        return new ProductPageResponse(
+            productResponses,
+            products.getTotalPages(),
+            products.getTotalElements()
+        );
     }
 } 
