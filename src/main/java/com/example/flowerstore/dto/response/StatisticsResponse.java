@@ -15,4 +15,5 @@ public class StatisticsResponse {
     private Double totalRevenue;
     private Long totalOrders;
     private Long totalProducts;
+    private Long totalUsers;
 } 

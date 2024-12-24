@@ -20,6 +20,7 @@ import com.example.flowerstore.entites.Payment;
 import com.example.flowerstore.repositories.OrderRepository;
 import com.example.flowerstore.repositories.CartRepository;
 import com.example.flowerstore.repositories.ProductRepository;
+import com.example.flowerstore.repositories.UserRepository;
 import com.example.flowerstore.util.AppConstant;
 import com.example.flowerstore.dto.response.TransactionResponse;
 import com.example.flowerstore.dto.response.OrderPageResponse;
@@ -34,6 +35,7 @@ import com.example.flowerstore.dto.response.StatisticsResponse;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService {
+    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
@@ -229,13 +231,14 @@ public class OrderServiceImpl implements OrderService {
         
         Long totalOrders = orderRepository.count();
         Long totalProducts = productRepository.countTotalProducts();
-        
+        Long totalUsers = userRepository.countTotalUsers();
         return new StatisticsResponse(
             recentOrders, 
             topProducts, 
             totalRevenue,
             totalOrders,
-            totalProducts
+            totalProducts,
+            totalUsers
         );
     }
 }
