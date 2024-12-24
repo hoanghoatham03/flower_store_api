@@ -28,6 +28,7 @@ public class Product {
     @NotBlank
     private String productName;
 
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     private Integer stock;
     private Double price;
