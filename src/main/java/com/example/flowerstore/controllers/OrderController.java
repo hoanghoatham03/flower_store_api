@@ -24,6 +24,7 @@ import com.example.flowerstore.services.OrderService;
 import com.example.flowerstore.dto.response.ApiResponse;
 import com.example.flowerstore.security.SecurityUtils;
 import com.example.flowerstore.util.AppConstant;
+import com.example.flowerstore.dto.response.OrderPageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,10 +36,14 @@ public class OrderController {
 
      //get all orders for admin with pagination
      @GetMapping("/admin/orders")
-     public ResponseEntity<ApiResponse<List<Order>>> getAllOrdersForAdmin(@ModelAttribute PaginationDTO paginationDTO) {
+     public ResponseEntity<ApiResponse<OrderPageResponse>> getAllOrdersForAdmin(@ModelAttribute PaginationDTO paginationDTO) {
          Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
-         List<Order> orders = orderService.getAllOrdersForAdmin(pageable);
-         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Orders fetched successfully", orders));
+         OrderPageResponse orderPageResponse = orderService.getAllOrdersForAdmin(pageable);
+         return ResponseEntity.ok(new ApiResponse<>(
+             HttpStatus.OK.value(), 
+             "Orders fetched successfully", 
+             orderPageResponse
+         ));
      }
  
      //update order status for admin

@@ -23,6 +23,8 @@ import com.example.flowerstore.repositories.CartRepository;
 import com.example.flowerstore.util.AppConstant;
 import com.example.flowerstore.entites.Transaction;
 import com.example.flowerstore.dto.response.TransactionResponse;
+import com.example.flowerstore.dto.response.OrderPageResponse;
+import org.springframework.data.domain.Page;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -174,8 +176,13 @@ public class OrderServiceImpl implements OrderService {
 
     //get all orders for admin
     @Override
-    public List<Order> getAllOrdersForAdmin(Pageable pageable) {
-        return orderRepository.findAll(pageable).getContent();
+    public OrderPageResponse getAllOrdersForAdmin(Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        return new OrderPageResponse(
+            orderPage.getContent(),
+            orderPage.getTotalPages(),
+            orderPage.getTotalElements()
+        );
     }
 
     //update order status for admin
