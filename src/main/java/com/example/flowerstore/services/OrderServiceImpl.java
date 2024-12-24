@@ -178,10 +178,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderPageResponse getAllOrdersForAdmin(Pageable pageable) {
         Page<Order> orderPage = orderRepository.findAll(pageable);
+        Double totalRevenue = orderRepository.findAll().stream()
+        .filter(order -> order.getPaymentStatus() == AppConstant.PaymentStatus.SUCCESS)
+        .mapToDouble(Order::getTotalAmount)
+        .sum();
+        
         return new OrderPageResponse(
             orderPage.getContent(),
             orderPage.getTotalPages(),
-            orderPage.getTotalElements()
+            orderPage.getTotalElements(),
+            totalRevenue
         );
     }
 

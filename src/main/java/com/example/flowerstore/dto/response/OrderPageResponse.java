@@ -14,4 +14,5 @@ public class OrderPageResponse {
     private List<Order> orders;
     private int totalPages;
     private long totalElements;
+    private Double totalRevenue;
 } 
