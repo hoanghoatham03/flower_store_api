@@ -8,6 +8,7 @@ import com.example.flowerstore.dto.request.ForgotPasswordDTO;
 import com.example.flowerstore.dto.request.LoginDTO;
 import com.example.flowerstore.dto.request.RegisterDTO;
 import com.example.flowerstore.dto.response.UserResponse;
+import com.example.flowerstore.dto.response.UserPageResponse;
 import com.example.flowerstore.entites.User;
 import com.example.flowerstore.exception.InvalidCredentialsException;
 import com.example.flowerstore.exception.InvalidTokenException;
@@ -161,12 +162,15 @@ public class UserController {
 
     //get all users for admin
     @GetMapping("/admin/users")
-    public ResponseEntity<ApiResponse<Object>> getUsers(@ModelAttribute PaginationDTO paginationDTO) {
+    public ResponseEntity<ApiResponse<UserPageResponse>> getUsers(@ModelAttribute PaginationDTO paginationDTO) {
         Pageable pageable = PageRequest.of(paginationDTO.getPageNo() - 1, paginationDTO.getPageSize());
-        List<UserResponse> users = userService.getAllUsers(pageable);
+        UserPageResponse userPageResponse = userService.getAllUsers(pageable);
 
-        ApiResponse<Object> response = new ApiResponse<>(HttpStatus.OK.value(), "Get all users successfully",
-                users);
+        ApiResponse<UserPageResponse> response = new ApiResponse<>(
+            HttpStatus.OK.value(), 
+            "Get all users successfully",
+            userPageResponse
+        );
 
         return ResponseEntity.ok(response);
     }
