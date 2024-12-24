@@ -6,6 +6,8 @@ import com.example.flowerstore.entites.Order;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import com.example.flowerstore.dto.response.StatisticsResponse;
+
 public interface OrderService {
     Order createOrderFromCart(OrderDTO orderDTO);
     List<Order> getAllOrdersForUser(Long userId);
@@ -16,4 +18,5 @@ public interface OrderService {
     void deleteOrder(Long userId, Long orderId);
     String getQrCode(Double amount, String transactionContent);
     Boolean checkPaymentStatus(Long orderId, Double amount, String transactionContent);
+    StatisticsResponse getStatistics();
 }

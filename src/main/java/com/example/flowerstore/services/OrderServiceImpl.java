@@ -28,6 +28,8 @@ import org.springframework.data.domain.Page;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.example.flowerstore.dto.response.TopProductResponse;
+import com.example.flowerstore.dto.response.StatisticsResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -178,16 +180,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderPageResponse getAllOrdersForAdmin(Pageable pageable) {
         Page<Order> orderPage = orderRepository.findAll(pageable);
-        Double totalRevenue = orderRepository.findAll().stream()
-        .filter(order -> order.getPaymentStatus() == AppConstant.PaymentStatus.SUCCESS)
-        .mapToDouble(Order::getTotalAmount)
-        .sum();
-        
         return new OrderPageResponse(
             orderPage.getContent(),
             orderPage.getTotalPages(),
-            orderPage.getTotalElements(),
-            totalRevenue
+            orderPage.getTotalElements()
         );
     }
 
@@ -217,5 +213,21 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new RuntimeException("Order status is not pending");
         }
+    }
+
+    @Override
+    public StatisticsResponse getStatistics() {
+        List<Order> recentOrders = orderRepository.findTop3RecentOrders();
+        List<TopProductResponse> topProducts = orderRepository.findTop3MostPurchasedProducts()
+            .stream()
+            .limit(3)
+            .toList();
+        
+        Double totalRevenue = orderRepository.findAll().stream()
+            .filter(order -> order.getPaymentStatus() == AppConstant.PaymentStatus.SUCCESS)
+            .mapToDouble(Order::getTotalAmount)
+            .sum();
+        
+        return new StatisticsResponse(recentOrders, topProducts, totalRevenue);
     }
 }

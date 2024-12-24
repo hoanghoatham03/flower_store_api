@@ -25,6 +25,7 @@ import com.example.flowerstore.dto.response.ApiResponse;
 import com.example.flowerstore.security.SecurityUtils;
 import com.example.flowerstore.util.AppConstant;
 import com.example.flowerstore.dto.response.OrderPageResponse;
+import com.example.flowerstore.dto.response.StatisticsResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -124,6 +125,17 @@ public class OrderController {
     public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Long userId, @PathVariable Long orderId) {
         orderService.deleteOrder(userId, orderId);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Order deleted successfully", null));
+    }
+
+    //get statistics for admin
+    @GetMapping("/admin/statistics")
+    public ResponseEntity<ApiResponse<StatisticsResponse>> getStatistics() {
+        StatisticsResponse statistics = orderService.getStatistics();
+        return ResponseEntity.ok(new ApiResponse<>(
+            HttpStatus.OK.value(),
+            "Statistics fetched successfully",
+            statistics
+        ));
     }
 
 }
