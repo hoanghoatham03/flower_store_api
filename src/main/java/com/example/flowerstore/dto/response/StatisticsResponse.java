@@ -13,4 +13,6 @@ public class StatisticsResponse {
     private List<Order> recentOrders;
     private List<TopProductResponse> topProducts;
     private Double totalRevenue;
+    private Long totalOrders;
+    private Long totalProducts;
 } 

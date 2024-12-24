@@ -27,4 +27,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
            "GROUP BY p.productId, p.productName, p.price " +
            "ORDER BY SUM(oi.quantity) DESC")
     List<TopProductResponse> findTop3MostPurchasedProducts();
+
+    
 }

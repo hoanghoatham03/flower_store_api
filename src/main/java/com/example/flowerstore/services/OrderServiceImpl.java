@@ -17,11 +17,10 @@ import com.example.flowerstore.entites.Cart;
 import com.example.flowerstore.entites.Order;
 import com.example.flowerstore.entites.OrderItem;
 import com.example.flowerstore.entites.Payment;
-import com.example.flowerstore.mapper.OrderMapper;
 import com.example.flowerstore.repositories.OrderRepository;
 import com.example.flowerstore.repositories.CartRepository;
+import com.example.flowerstore.repositories.ProductRepository;
 import com.example.flowerstore.util.AppConstant;
-import com.example.flowerstore.entites.Transaction;
 import com.example.flowerstore.dto.response.TransactionResponse;
 import com.example.flowerstore.dto.response.OrderPageResponse;
 import org.springframework.data.domain.Page;
@@ -35,8 +34,8 @@ import com.example.flowerstore.dto.response.StatisticsResponse;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService {
+    private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
-    private final OrderMapper orderMapper;
     private final CartRepository cartRepository;
     private final AddressService addressService;
     private final PaymentService paymentService;
@@ -228,6 +227,15 @@ public class OrderServiceImpl implements OrderService {
             .mapToDouble(Order::getTotalAmount)
             .sum();
         
-        return new StatisticsResponse(recentOrders, topProducts, totalRevenue);
+        Long totalOrders = orderRepository.count();
+        Long totalProducts = productRepository.countTotalProducts();
+        
+        return new StatisticsResponse(
+            recentOrders, 
+            topProducts, 
+            totalRevenue,
+            totalOrders,
+            totalProducts
+        );
     }
 }
