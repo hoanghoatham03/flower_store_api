@@ -28,6 +28,6 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "productId")
-    @JsonIgnoreProperties({"orderItems", "cartItems", "comments", "images"})
+    @JsonIgnoreProperties({"orderItems", "cartItems", "comments"})
     private Product product;
 }

@@ -12,5 +12,6 @@ public class ProductResponse {
     private Double discount;
     private Double realPrice;
     private Long categoryId;
+    private String categoryName;
     private String imageUrl;
 } 
